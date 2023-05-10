@@ -91,7 +91,7 @@ class MinimaxAgent:
             self.board.push(action)
             value = alphaBeta(self.board, not self.isComputer, self.depth, alpha, beta)
             self.board.pop()
-            print(self.board.san(action), ":", value)
+            # print(self.board.san(action), ":", value)
 
             if value > maxValue:
                 maxAction = action
