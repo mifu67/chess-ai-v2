@@ -14,7 +14,6 @@ PIECES = {
 class Chessboard:
     def __init__(self, player_color, agent1, agent2, verbose = True):
         self.board = chess.Board()
-        # self.minimaxagent = MinimaxAgent(player_color, self.board, eval)
         self.player_color = player_color
         self.agent1 = agent1
         self.agent1.board = self.board
@@ -74,12 +73,16 @@ class Chessboard:
     # make a move:
     def move(self, agent):
         move = agent.get_move()
+        if move == "quit":
+            return True
         if agent.name != "player" and self.verbose:
             print("Computer makes move:", self.board.san(move))
         self.board.push(move) 
         
         if self.verbose:
             self.display()
+        
+        return False
     
     def is_end(self):
         if self.board.is_game_over():   

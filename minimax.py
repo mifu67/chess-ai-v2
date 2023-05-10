@@ -1,6 +1,16 @@
 import chess
 import math
 
+PIECES = [
+    chess.PAWN,
+    chess.KNIGHT,
+    chess.BISHOP,
+    chess.ROOK,
+    chess.QUEEN,
+    chess.KING
+]
+PIECES_WEIGHTS = [100, 300, 300, 500, 900, 1]
+
 class MinimaxAgent:
     """
     This agent calculates the best action using the minimax algorithm.
@@ -14,7 +24,12 @@ class MinimaxAgent:
         self.opponent_color = not color
     
     def eval(self):
-        pass
+        my_count = 0
+        opp_count = 0
+        for i in range(len(PIECES)):
+            my_count += PIECES_WEIGHTS[i] * len(self.board.pieces(PIECES[i], self.color))
+            opp_count += PIECES_WEIGHTS[i] * len(self.board.pieces(PIECES[i], self.opponent_color))
+        return my_count - opp_count
     
     def get_move(self):
         def alphaBeta(board, isComputer, currDepth, alpha, beta):
@@ -67,7 +82,7 @@ class MinimaxAgent:
                     return minValue
 
         # legalMoves = self.order_moves(list(self.board.legal_moves))
-        legalMoves = self.board.legal_moves
+        legalMoves = list(self.board.legal_moves)
         maxAction = legalMoves[0]
         maxValue = -math.inf
         alpha = -math.inf
@@ -76,6 +91,7 @@ class MinimaxAgent:
             self.board.push(action)
             value = alphaBeta(self.board, not self.isComputer, self.depth, alpha, beta)
             self.board.pop()
+            print(self.board.san(action), ":", value)
 
             if value > maxValue:
                 maxAction = action

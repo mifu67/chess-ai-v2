@@ -12,9 +12,11 @@ class Player:
         self.board = board
 
     def get_move(self):
-        move_input = input("Please enter your move in standard algebraic notation. Type 'help' for examples: ")
+        move_input = input("Please enter your move in standard algebraic notation. Type 'help' for examples. Type 'quit' to resign. ")
         if move_input.strip() == "help":
             print("e4, Nf3, Qxb4, bxc6, 0-0, Nfd2")
+        elif move_input.strip() == "quit":
+            return "quit"
         while True:
             try:
                 move = self.board.parse_san(move_input.strip())

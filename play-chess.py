@@ -23,7 +23,7 @@ def main():
     player_color = chess.WHITE if white else chess.BLACK
     opp_color = chess.BLACK if white else chess.WHITE
     opponent = None
-    val = input("Choose your opponent's algorithm: type '1' for minimax, and '2' for deep MCTS.")
+    val = input("Choose your opponent's algorithm: type '1' for minimax, and '2' for deep MCTS. ")
     while True:
         if val == '1':
             opponent = MinimaxAgent(opp_color, None)
@@ -47,7 +47,10 @@ def main():
     # off to the races! 
     if player_color == chess.WHITE:
         while True:
-            board.move(player)
+            resign = board.move(player)
+            if resign:
+                print("White resigns! Black wins.")
+                break
             if board.is_end(): break
             board.move(opponent)
             if board.is_end(): break
@@ -55,7 +58,10 @@ def main():
         while True:
             board.move(opponent)
             if board.is_end(): break
-            board.move(player)
+            resign = board.move(player)
+            if resign:
+                print("Black resigns! White wins.")
+                break
             if board.is_end(): break
 
 if __name__ == "__main__":
