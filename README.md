@@ -1,1 +1,3 @@
-# chess-ai-v2
+# Angelfish
+
+Michelle Fu and Roger Xia's CS229 final project.
