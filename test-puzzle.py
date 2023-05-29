@@ -31,45 +31,62 @@ def get_outcome(board):
     else:
         return 0.5
 
-# TODO: run puzzle
-def run_puzzle(board : Chessboard, white, black) -> int:
+def run_puzzle(board : Chessboard, white, black, moves, active_move) -> int:
     winner = 0
-    while True:
-        board.move(white)
-        if board.is_end():
-            winner = get_outcome(board)
-            break
-        board.move(black)
-        if board.is_end():
-            winner = get_outcome(board)
-            break
+    if active_move == 'w':
+        agent_move = white
+    else:
+        agent_move = black
+
+    for i in range(0, len(moves), 2):
+        # make first puzzle move
+        board.board.push(chess.Move.from_uci(moves[i]))
+        agent_move.board = board.board
+
+        # make agent move
+        agent_move_object = agent_move.get_move_object()
+        board.board.push(agent_move_object)
+        agent_move.board = board.board
+
+        print(agent_move_object.uci())
+        print(moves[i+1])
+
+        # if incorrect, agent loses and terminate
+        if agent_move_object != chess.Move.from_uci(moves[i+1]):
+            return winner
+
+    winner = 1
     return winner
 
 def main():
     """
-    Command format: python test-puzzle.py <agent> <puzzles.csv>
+    Command format: python test-puzzle.py <agent> <puzzles.csv> <num_puzzles>
     """
     args = sys.argv
-    agent = args[1]
+    agent_name = args[1]
 
     agent_wins = 0
 
     puzzles_df = pd.read_csv(args[2])
+    num_puzzles = int(args[3])
 
-    for index, row in puzzles_df.iterrows()::
+    for index, row in puzzles_df.head(num_puzzles).iterrows():
         FEN = row['FEN']
+        split_FEN = FEN.strip().split(' ')
+        active_move = split_FEN[1]
+        moves = row['Moves']
+        split_moves = moves.strip().split(' ')
 
-        # TODO: set up chessboard according to puzzle
-        if active_move == white:
-            white = init_agent(agent, chess.WHITE)
-        else:
-            black = init_agent(agent, chess.BLACK)
+        # set up chessboard according to puzzle
+        white = init_agent(agent_name, chess.WHITE)
+        black = init_agent(agent_name, chess.BLACK)
         board = Chessboard(None, white, black, verbose=False)
-        board.board = chess.Board(fen)
+        board.board = chess.Board(FEN)
 
-        # TODO: run puzzle
-        winner = run_puzzle(board, white, black)
+        # run puzzle
+        winner = run_puzzle(board, white, black, split_moves, active_move)
 
+        # display final board of puzzle
         board.display()
 
         if winner == 1:

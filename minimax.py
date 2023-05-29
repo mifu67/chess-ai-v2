@@ -99,3 +99,6 @@ class MinimaxAgent:
                 alpha = max(alpha, maxValue)
 
         return maxAction
+
+    def get_move_object(self):
+        return self.get_move()
