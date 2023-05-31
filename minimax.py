@@ -1,3 +1,9 @@
+"""
+FILE: minimax.py
+Author: Michelle Fu
+
+Contains the minimax agent.
+"""
 import chess
 import math
 

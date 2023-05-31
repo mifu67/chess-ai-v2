@@ -1,3 +1,10 @@
+"""
+FILE: play-chess.py
+Author: Michelle Fu
+
+Contains code for playing a console game.
+"""
+
 from chessboard import Chessboard
 from baseline import BaselineAgent
 from minimax import MinimaxAgent
