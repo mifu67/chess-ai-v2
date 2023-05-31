@@ -28,13 +28,18 @@ class MinimaxAgent:
         self.isComputer = True
         self.color = color
         self.opponent_color = not color
+        self.quiesce_on = True
     
-    def eval(self):
+    def eval(self, temp_board=False):
+        if temp_board:
+            board = self.temp_board
+        else:
+            board = self.board
         my_count = 0
         opp_count = 0
         for i in range(len(PIECES)):
-            my_count += PIECES_WEIGHTS[i] * len(self.board.pieces(PIECES[i], self.color))
-            opp_count += PIECES_WEIGHTS[i] * len(self.board.pieces(PIECES[i], self.opponent_color))
+            my_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.color))
+            opp_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.opponent_color))
         return my_count - opp_count
     
     def get_move(self):
@@ -52,15 +57,15 @@ class MinimaxAgent:
 
             # we've bottomed out, so call the eval function/quiesce
             elif currDepth == 0:
-                # if self.quiesce_on == True:
-                #     return self.quiesce(alpha, beta, board, 3)
+                if self.quiesce_on == True:
+                    return self.quiesce(alpha, beta, board, 3)
                 eval = self.eval()
                 return eval
 
             # minimax
             else:
-                # legalMoves = self.order_moves(list(board.legal_moves))
-                legalMoves = list(board.legal_moves)
+                legalMoves = self.order_moves(board, list(board.legal_moves))
+                #legalMoves = list(board.legal_moves)
                 if isComputer:
                     maxValue = -math.inf
                     for action in legalMoves:
@@ -87,8 +92,8 @@ class MinimaxAgent:
                         beta = min(beta, minValue)
                     return minValue
 
-        # legalMoves = self.order_moves(list(self.board.legal_moves))
-        legalMoves = list(self.board.legal_moves)
+        legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
+        #legalMoves = list(self.board.legal_moves)
         maxAction = legalMoves[0]
         maxValue = -math.inf
         alpha = -math.inf
@@ -105,3 +110,66 @@ class MinimaxAgent:
                 alpha = max(alpha, maxValue)
 
         return maxAction
+
+    def quiesce(self, alpha, beta, board, depth):
+        if depth == 0 or board.is_game_over():
+            return self.eval()
+
+        stand_pat = self.eval()
+
+        if stand_pat >= beta:
+            return beta
+
+        if alpha < stand_pat:
+            alpha = stand_pat
+
+        # Generate capturing moves
+        captures = [move for move in board.legal_moves if board.is_capture(move)]
+
+        for move in captures:
+            board.push(move)
+            score = -self.quiesce(-beta, -alpha, board, depth - 1)
+            board.pop()
+
+            if score >= beta:
+                return beta
+
+            if score > alpha:
+                alpha = score
+
+        return alpha
+
+    # Function to order moves based on a simple heuristic
+    def order_moves(self, board, moves):
+        ordered_moves = []
+        for move in moves:
+            # Perform a simple evaluation of the move
+            score = self.evaluate_move(board, move)
+            ordered_moves.append((move, score))
+
+        # Sort the moves based on the scores in descending order
+        ordered_moves.sort(key=lambda x: x[1], reverse=True)
+
+        # Extract the ordered moves from the list of tuples
+        ordered_moves = [move for move, _ in ordered_moves]
+        return ordered_moves
+
+    def evaluate_move(self, board, move):
+        # Make the move on a temporary board
+        self.temp_board = board.copy()
+        self.temp_board.push(move)
+
+        # Calculate the material difference after the move
+        material_diff = self.eval(temp_board=True) - self.eval()
+
+        # Calculate other factors you want to consider for move evaluation
+        # For example, piece-square tables, pawn structure, king safety, etc.
+
+        # Combine the factors into an overall score for the move
+        # move_score = material_diff + other_factors_score(temp_board)
+
+        return material_diff
+        # return move_score
+
+    def get_move_object(self):
+        return self.get_move()
