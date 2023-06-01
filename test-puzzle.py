@@ -34,9 +34,9 @@ def get_outcome(board):
 def run_puzzle(board : Chessboard, white, black, moves, active_move) -> int:
     winner = 0
     if active_move == 'w':
-        agent_move = white
-    else:
         agent_move = black
+    else:
+        agent_move = white
 
     for i in range(0, len(moves), 2):
         # make first puzzle move
@@ -44,7 +44,7 @@ def run_puzzle(board : Chessboard, white, black, moves, active_move) -> int:
         agent_move.board = board.board
 
         # make agent move
-        agent_move_object = agent_move.get_move_object()
+        agent_move_object = agent_move.get_move()
         board.board.push(agent_move_object)
         agent_move.board = board.board
 
