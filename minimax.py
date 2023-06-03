@@ -58,7 +58,7 @@ class MinimaxAgent:
             # we've bottomed out, so call the eval function/quiesce
             elif currDepth == 0:
                 if self.quiesce_on == True:
-                    return self.quiesce(alpha, beta, board, 3)
+                    return self.quiesce(alpha, beta, board, 2)
                 eval = self.eval()
                 return eval
 
@@ -115,13 +115,13 @@ class MinimaxAgent:
         if depth == 0 or board.is_game_over():
             return self.eval()
 
-        stand_pat = self.eval()
+        cur_score = self.eval()
 
-        if stand_pat >= beta:
+        if cur_score >= beta:
             return beta
 
-        if alpha < stand_pat:
-            alpha = stand_pat
+        if alpha < cur_score:
+            alpha = cur_score
 
         # Generate capturing moves
         captures = [move for move in board.legal_moves if board.is_capture(move)]
@@ -170,6 +170,3 @@ class MinimaxAgent:
 
         return material_diff
         # return move_score
-
-    def get_move_object(self):
-        return self.get_move()
