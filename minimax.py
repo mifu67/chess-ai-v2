@@ -93,7 +93,7 @@ class MinimaxAgent:
                     return minValue
 
         legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
-        #legalMoves = list(self.board.legal_moves)
+        legalMoves = list(self.board.legal_moves)
         maxAction = legalMoves[0]
         maxValue = -math.inf
         alpha = -math.inf
