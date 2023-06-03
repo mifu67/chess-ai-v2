@@ -1,10 +1,24 @@
+import chess
+
+PIECES = [
+    chess.PAWN,
+    chess.KNIGHT,
+    chess.BISHOP,
+    chess.ROOK,
+    chess.QUEEN,
+    chess.KING
+]
+PIECES_WEIGHTS = [100, 300, 300, 500, 900, 1]
+
 def eval_material_count(board, color, opponent_color):
     my_count = 0
     opp_count = 0
     for i in range(len(PIECES)):
         my_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], color))
         opp_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], opponent_color))
-    return my_count - opp_count
+    score = my_count - opp_count
+    #print(score)
+    return score
 
 def eval_pieceSquare_tables(board, color):
     # Piece-square tables (PSQT) for evaluation
@@ -140,7 +154,7 @@ def eval_pieceSquare_tables(board, color):
     def get_game_phase(board):
         # Count the number of remaining pieces
         piece_counts = board.piece_map().values()
-        total_pieces = sum(piece_counts)
+        total_pieces = len(piece_counts)
 
         # Determine the phase based on the number of remaining pieces
         if total_pieces <= 12:
@@ -152,7 +166,9 @@ def eval_pieceSquare_tables(board, color):
 
     score = evaluate_position(board)
     if color == chess.WHITE:
+        #print(score)
         return score
+    #print(score)
     return -score
 
 def evaluate_pawn_structure(board, color):
@@ -162,21 +178,29 @@ def evaluate_pawn_structure(board, color):
     pawn_ranks = board.pawns & board.occupied_co[color]
 
     # Doubled pawns
-    doubled_pawns = pawn_ranks & (pawn_ranks << 8)
-    score -= len(doubled_pawns) * 10
+    doubled_pawns = 0
+
+    for file in range(8):
+        pawns_in_file = board.pieces(chess.PAWN, color) & chess.BB_FILES[file]
+        pawns_list = list(pawns_in_file)
+        if len(pawns_list) > 1:
+            doubled_pawns += len(pawns_list) - 1
+
+    score -= doubled_pawns * 10
 
     # Isolated pawns
-    isolated_pawns = pawn_ranks & ~(pawn_ranks << 1) & ~(pawn_ranks >> 1)
-    score -= len(isolated_pawns) * 20
+    """isolated_pawns = pawn_ranks & ~(pawn_ranks << 1) & ~(pawn_ranks >> 1)
+    print(isolated_pawns) # TODO: fix isolated_pawns
+    score -= isolated_pawns * 20"""
 
     # Passed pawns
-    passed_pawns = 0
-    enemy_pawn_ranks = self.board.pawns & self.board.occupied_co[not color]
+    """passed_pawns = 0
+    enemy_pawn_ranks = board.pawns & board.occupied_co[not color]
     for square in chess.scan_reversed(pawn_ranks):
-        if not enemy_pawn_ranks & chess.SquareSet(chess.pawn_attacks(color, square)):
+        if not enemy_pawn_ranks & chess.SquareSet(chess.pawn_attacks(color, square)): #TODO: pawn_attacks
             passed_pawns |= chess.square_file(square)
-    score += bin(passed_pawns).count('1') * 20
-
+    score += bin(passed_pawns).count('1') * 20"""
+    #print(score)
     return score
 
 def evaluate_king_safety(board, color):
@@ -211,6 +235,6 @@ def evaluate_king_safety(board, color):
         # Penalize if the king is exposed on the file adjacent to the center
         if black_king_file == 3 or black_king_file == 4:
             score -= 10
-
+    #print(score)
     return score
     
