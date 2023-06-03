@@ -1,3 +1,10 @@
+"""
+FILE: baseline.py
+Author: Michelle Fu
+
+Contains the baseline agent.
+"""
+
 import chess
 import random
 
@@ -13,3 +20,6 @@ class BaselineAgent:
     def get_move(self):
         legal_moves = list(self.board.legal_moves)
         return random.choice(legal_moves)
+
+    def get_move_object(self):
+        return self.get_move()

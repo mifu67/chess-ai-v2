@@ -1,3 +1,10 @@
+"""
+FILE: chessboard.py
+Author: Michelle Fu
+
+Contains the Chessboard class, which handles moves and board display.
+"""
+
 import chess
 import random
 
