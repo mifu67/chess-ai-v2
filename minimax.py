@@ -1,12 +1,13 @@
 """
 FILE: minimax.py
-Author: Michelle Fu
+Authors: Michelle Fu, Roger Xia
 
 Contains the minimax agent.
 """
 import chess
 import math
 from eval_fns import *
+from play_openings import *
 
 PIECES = [
     chess.PAWN,
@@ -96,6 +97,11 @@ class MinimaxAgent:
                             break
                         beta = min(beta, minValue)
                     return minValue
+
+        # Play openings
+        opening_move = play_openings(self.board)
+        if opening_move != None:
+            return opening_move
 
         legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
         legalMoves = list(self.board.legal_moves)
