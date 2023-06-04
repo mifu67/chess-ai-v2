@@ -84,7 +84,7 @@ class EvaluationModel(pl.LightningModule):
 def main():
     db.connect()
     pl.seed_everything(42, workers=True)
-    trainer = pl.Trainer(devices="auto", accelerator="auto", precision="16-mixed", max_epochs=1)
+    trainer = pl.Trainer(devices="auto", accelerator="auto", precision="16-mixed", max_epochs=1, log_every_n_steps=200)
     # trainer = pl.Trainer(max_epochs=1)
     model = EvaluationModel()
     trainer.fit(model)
