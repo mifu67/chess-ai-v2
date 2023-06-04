@@ -20,11 +20,10 @@ db = SqliteDatabase('2021-07-31-lichess-evaluations-37MM.db')
 LABEL_COUNT = 37164639
 
 class Evaluations(Model):
-    def __init__(self):
-        self.id = IntegerField()
-        self.fen = TextField()
-        self.binary = BlobField()
-        self.eval = FloatField()
+    id = IntegerField()
+    fen = TextField()
+    binary = BlobField()
+    eval = FloatField()
 
     class Meta:
         database = db 
@@ -50,7 +49,7 @@ class EvaluationDataset(IterableDataset):
         eval = Evaluations.get(Evaluations.id == idx+1)
         bin = np.frombuffer(eval.binary, dtype=np.uint8)
         bin = np.unpackbits(bin, axis=0).astype(np.single)
-        eval.eval = np.sign(eval) # good for black, even, good for white
+        eval.eval = np.sign(eval.eval) + 1 # good for black, even, good for white
         ev = np.array([eval.eval]).astype(np.single)
         return {'binary': bin, 'eval': ev}
 
@@ -66,13 +65,12 @@ class EvaluationModel(pl.LightningModule):
 
     def training_step(self, batch):
         x, y = batch['binary'], batch['eval']
-        print(y)
+        y = torch.flatten(y).long()
+        # print(y)
         logits = self(x)
-        y_hat = np.argmax(logits) - 1
-        print(y_hat)
-        loss = F.cross_entropy(y_hat, y)
-        print(loss)
-        raise("stop for debug")
+        # print(logits)
+        loss = F.cross_entropy(logits, y)
+        # print(loss)
         return loss
     
     def configure_optimizers(self):
@@ -80,10 +78,16 @@ class EvaluationModel(pl.LightningModule):
     
     def train_dataloader(self):
         dataset = EvaluationDataset(count=LABEL_COUNT)
-        return DataLoader(dataset, batch_size=self.batch_size, num_workers=2, pin_memory=True)
+        return DataLoader(dataset, batch_size=self.batch_size, num_workers=8, pin_memory=True)
+        # return DataLoader(dataset, batch_size=self.batch_size, num_workers=8)
 
 def main():
     db.connect()
-    trainer = pl.Trainer(gpus=1, precision=16, max_epochs=1, auto_lr_find=True)
+    pl.seed_everything(42, workers=True)
+    trainer = pl.Trainer(devices="auto", accelerator="auto", precision="16-mixed", max_epochs=1)
+    # trainer = pl.Trainer(max_epochs=1)
     model = EvaluationModel()
     trainer.fit(model)
+
+if __name__ == "__main__":
+    main()
