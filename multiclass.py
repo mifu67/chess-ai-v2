@@ -14,7 +14,6 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, IterableDataset, random_split
 import pytorch_lightning as pl
 from random import randrange
-from collections import OrderedDict
 
 db = SqliteDatabase('2021-07-31-lichess-evaluations-37MM.db')
 LABEL_COUNT = 37164639
@@ -70,6 +69,7 @@ class EvaluationModel(pl.LightningModule):
         logits = self(x)
         # print(logits)
         loss = F.cross_entropy(logits, y)
+        self.log("loss", loss, prog_bar=True)
         # print(loss)
         return loss
     
