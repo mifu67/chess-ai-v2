@@ -1,3 +1,9 @@
+"""
+FILE: eval_fns.py
+Author: Roger Xia
+
+Contains evaluation functions for the minimax agent.
+"""
 import chess
 
 PIECES = [
@@ -17,7 +23,6 @@ def eval_material_count(board, color, opponent_color):
         my_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], color))
         opp_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], opponent_color))
     score = my_count - opp_count
-    #print(score)
     return score
 
 def eval_pieceSquare_tables(board, color):
