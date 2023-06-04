@@ -6,6 +6,7 @@ Contains the minimax agent.
 """
 import chess
 import math
+from eval_fns import *
 
 PIECES = [
     chess.PAWN,
@@ -35,12 +36,16 @@ class MinimaxAgent:
             board = self.temp_board
         else:
             board = self.board
-        my_count = 0
+        """my_count = 0
         opp_count = 0
         for i in range(len(PIECES)):
             my_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.color))
             opp_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.opponent_color))
-        return my_count - opp_count
+        return my_count - opp_count"""
+        score = eval_material_count(board, self.color, self.opponent_color) + eval_pieceSquare_tables(board, self.color)
+        + evaluate_pawn_structure(board, self.color) + evaluate_king_safety(board, self.color)
+
+        return score
     
     def get_move(self):
         def alphaBeta(board, isComputer, currDepth, alpha, beta):
