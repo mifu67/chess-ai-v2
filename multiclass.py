@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, IterableDataset, random_split
 import pytorch_lightning as pl
 from random import randrange
-
+from process_data import fen_to_vec
 db = SqliteDatabase('2021-07-31-lichess-evaluations-37MM.db')
 LABEL_COUNT = 37164639
 
@@ -46,18 +46,19 @@ class EvaluationDataset(IterableDataset):
 
     def __getitem__(self, idx):
         eval = Evaluations.get(Evaluations.id == idx+1)
-        bin = np.frombuffer(eval.binary, dtype=np.uint8)
-        bin = np.unpackbits(bin, axis=0).astype(np.single)
+        # bin = np.frombuffer(eval.binary, dtype=np.uint8)
+        # bin = np.unpackbits(bin, axis=0).astype(np.single)
+        bin = fen_to_vec(eval.fen)
         eval.eval = np.sign(eval.eval) + 1 # good for black, even, good for white
         ev = np.array([eval.eval]).astype(np.single)
         return {'binary': bin, 'eval': ev}
 
-class EvaluationModel(pl.LightningModule):
-    def __init__(self, learning_rate=1e-3, batch_size=1024):
+class LinearModel(pl.LightningModule):
+    def __init__(self, learning_rate=1e-4, batch_size=1024):
         super().__init__()
         self.batch_size = batch_size
         self.learning_rate = learning_rate
-        self.model = nn.Linear(808, 3)
+        self.model = nn.Linear(772, 3)
     
     def forward(self, x):
         return self.model(x)
@@ -86,7 +87,7 @@ def main():
     pl.seed_everything(42, workers=True)
     trainer = pl.Trainer(devices="auto", accelerator="auto", precision="16-mixed", max_epochs=1, log_every_n_steps=200)
     # trainer = pl.Trainer(max_epochs=1)
-    model = EvaluationModel()
+    model = LinearModel()
     trainer.fit(model)
 
 if __name__ == "__main__":
