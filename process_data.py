@@ -36,7 +36,7 @@ def bitboards_to_array(bitboards):
     bb = np.asarray(bitboards, dtype=np.uint64)[:, np.newaxis]
     s = 8 * np.arange(7, -1, -1, dtype=np.uint64)
     b = (bb >> s).astype(np.uint8)
-    b = np.unpackbits(b, bitorder="little").astype(np.single)
+    b = np.unpackbits(b, bitorder="little")
     return b
 
 # def main():
@@ -65,5 +65,5 @@ def bitboards_to_array(bitboards):
 #             csv_new.writerow(row)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

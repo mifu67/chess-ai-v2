@@ -48,7 +48,7 @@ class EvaluationDataset(IterableDataset):
         eval = Evaluations.get(Evaluations.id == idx+1)
         # bin = np.frombuffer(eval.binary, dtype=np.uint8)
         # bin = np.unpackbits(bin, axis=0).astype(np.single)
-        bin = fen_to_vec(eval.fen)
+        bin = fen_to_vec(eval.fen).astype(np.single)
         eval.eval = np.sign(eval.eval) + 1 # good for black, even, good for white
         ev = np.array([eval.eval]).astype(np.single)
         return {'binary': bin, 'eval': ev}
@@ -58,7 +58,7 @@ class LinearModel(pl.LightningModule):
         super().__init__()
         self.batch_size = batch_size
         self.learning_rate = learning_rate
-        self.model = nn.Linear(772, 3)
+        self.model = nn.Linear(773, 3)
     
     def forward(self, x):
         return self.model(x)
