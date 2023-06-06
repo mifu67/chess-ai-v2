@@ -85,7 +85,7 @@ class DeepModel(pl.LightningModule):
 
 def main():
     db.connect()
-    torch.set_float32_matmul_precision('medium' | 'high')
+    torch.set_float32_matmul_precision('medium')
     pl.seed_everything(42, workers=True)
     trainer = pl.Trainer(devices="auto", accelerator="auto", precision="16-mixed", max_epochs=1, log_every_n_steps=200)
     model = DeepModel()
