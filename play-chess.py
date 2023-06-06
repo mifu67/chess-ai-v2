@@ -6,14 +6,21 @@ Contains code for playing a console game.
 """
 
 from chessboard import Chessboard
-from baseline import BaselineAgent
-from minimax import MinimaxAgent
+from ai.baseline import BaselineAgent
+from ai.minimax import MinimaxAgent
+from ai.model_only import ModelOnlyAgent
 from player import Player
 
+import sys
 import chess
 
 # the chess game lives here
 def main():
+    if len(sys.argv) < 2:
+        print("Please specify an opponent type.")
+        print("Opponents: baseline, base-minimax, fancy-minimax, linear-only, deep-only, linear-minimax, deep-minimax.")
+        return
+    
     # get the player's color
     white = True
     val = input("Welcome to chess! Type 'white' to play white and 'black' to play black. ")
@@ -27,22 +34,29 @@ def main():
             break
         else:
             val = input("Invalid input: please type 'white' or 'black'. ")
+
     player_color = chess.WHITE if white else chess.BLACK
     opp_color = chess.BLACK if white else chess.WHITE
+
     opponent = None
-    val = input("Choose your opponent's algorithm: type '1' for minimax, and '2' for deep MCTS. ")
-    while True:
-        if val == '1':
-            opponent = MinimaxAgent(opp_color, None)
-            break
-        elif val == '2':
-            print("haha, that's not implemented yet")
-            break
-        else:
-            print("defaulting to random agent (for debugging)")
-            opponent = BaselineAgent(opp_color, None)
-            # val = input("Invalid input: please type '1' or '2'.")
-            break 
+    opponent_name = sys.argv[1]
+    if opponent_name == 'baseline':
+        opponent = BaselineAgent(opp_color, None)
+    elif opponent_name == 'base-minimax':
+        opponent = MinimaxAgent(opp_color, None, "simple")
+    elif opponent_name == 'fancy-minimax':
+        opponent = MinimaxAgent(opp_color, None, "fancy")
+    elif opponent_name == "linear-only":
+        opponent = ModelOnlyAgent(opp_color, None, "linear")
+    elif opponent_name == "deep-only":
+        opponent = ModelOnlyAgent(opp_color, None, "deep")
+    elif opponent_name == "linear-minimax":
+        opponent = MinimaxAgent(opp_color, None, "linear")
+    elif opponent_name == "deep-minimax":
+        opponent = MinimaxAgent(opp_color, None, "deep")
+    else:
+        print("Invalid opponent. Please select one of baseline, base-minimax, fancy-minimax, linear-only, \
+              deep-only, linear-minimax, deep-minimax")
 
     print("Let's get started!")
     print("")

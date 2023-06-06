@@ -5,6 +5,8 @@ Author: Roger Xia
 Contains evaluation functions for the minimax agent.
 """
 import chess
+import torch
+from process_data import fen_to_vec
 
 PIECES = [
     chess.PAWN,
@@ -242,4 +244,19 @@ def evaluate_king_safety(board, color):
             score -= 10
     #print(score)
     return score
-    
+
+def eval_linear(board, color, model):
+    model.eval()
+    pos = fen_to_vec(board.fen)
+    eval = torch.argmax(model(pos)) - 1
+    if color == chess.BLACK:
+        eval = -eval
+    return eval
+
+def eval_deep(board, color, model):
+    model.eval()
+    pos = fen_to_vec(board.fen)
+    eval = model(pos)
+    if color == chess.BLACK:
+        eval = -eval
+    return eval

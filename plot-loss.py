@@ -8,9 +8,9 @@ import pandas as pd
 import plotly.express as px
 
 def main():
-    data = pd.read_csv("lightning_logs/version_2/metrics.csv")
-    fig = px.line(data, x='step', y='loss', title='Training Loss: Linear Model')
-    fig.write_image("images/linear-loss.png")
+    data = pd.read_csv("lightning_logs/version_5/metrics.csv")
+    fig = px.line(data, x='step', y='loss', title='Training Loss: Deep Model')
+    fig.write_image("images/deep-loss.png")
     
 if __name__ == "__main__":
     main()

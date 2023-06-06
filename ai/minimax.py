@@ -6,8 +6,10 @@ Contains the minimax agent.
 """
 import chess
 import math
-from eval_fns import *
-from play_openings import *
+from ai.eval_fns import *
+from ai.play_openings import *
+from ai.multiclass import LinearModel
+from ai.deep_net import DeepModel
 
 PIECES = [
     chess.PAWN,
@@ -23,7 +25,7 @@ class MinimaxAgent:
     """
     This agent calculates the best action using the minimax algorithm.
     """
-    def __init__(self, color, board):
+    def __init__(self, color, board, eval):
         self.name = "minimax"
         self.depth = 2
         self.board = board
@@ -31,20 +33,28 @@ class MinimaxAgent:
         self.color = color
         self.opponent_color = not color
         self.quiesce_on = True
-    
+        self.eval_fn = eval
+        self.model = None
+        if self.eval_fn == "linear":
+            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt")
+            self.model.eval()
+        if self.eval_fn == "deep":
+            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt")
+            self.model.eval()
+            
     def eval(self, temp_board=False):
         if temp_board:
             board = self.temp_board
         else:
             board = self.board
-        """my_count = 0
-        opp_count = 0
-        for i in range(len(PIECES)):
-            my_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.color))
-            opp_count += PIECES_WEIGHTS[i] * len(board.pieces(PIECES[i], self.opponent_color))
-        return my_count - opp_count"""
-        score = eval_material_count(board, self.color, self.opponent_color) + eval_pieceSquare_tables(board, self.color)
-        + evaluate_pawn_structure(board, self.color) + evaluate_king_safety(board, self.color)
+
+        if self.eval_fn == "simple":
+            score = eval_material_count(board, self.color, self.opponent_color)
+        elif self.eval_fn == "fancy":
+            score = eval_material_count(board, self.color, self.opponent_color) + eval_pieceSquare_tables(board, self.color)
+            + evaluate_pawn_structure(board, self.color) + evaluate_king_safety(board, self.color)
+        else:
+            score = eval_linear(board, self.color, self.model)
 
         return score
     
