@@ -5,6 +5,7 @@ Authors: Michelle Fu, Roger Xia
 Contains the minimax agent.
 """
 import chess
+import chess.polyglot
 import math
 from ai.eval_fns import *
 from ai.play_openings import *
@@ -36,11 +37,13 @@ class MinimaxAgent:
         self.eval_fn = eval
         self.model = None
         if self.eval_fn == "linear":
-            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt")
+            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
             self.model.eval()
         if self.eval_fn == "deep":
-            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt")
+            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
             self.model.eval()
+        self.book = chess.polyglot.MemoryMappedReader("Titans.bin")
+        self.in_opening = True
             
     def eval(self, temp_board=False):
         if temp_board:
@@ -109,9 +112,12 @@ class MinimaxAgent:
                     return minValue
 
         # Play openings
-        opening_move = play_openings(self.board)
-        if opening_move != None:
-            return opening_move
+        if self.in_opening:
+            if self.book.get(self.board) is None:
+                self.in_opening = False
+            else:
+                move = self.book.weighted_choice(self.board).move
+                return move
 
         legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
         legalMoves = list(self.board.legal_moves)

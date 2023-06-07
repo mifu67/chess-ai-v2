@@ -8,17 +8,26 @@ from chessboard import Chessboard
 import chess
 import sys
 
-from baseline import BaselineAgent
-from minimax import MinimaxAgent
+from ai.baseline import BaselineAgent
+from ai.minimax import MinimaxAgent
+from ai.model_only import ModelOnlyAgent
 
 def init_agent(agent_name, color):
     agent = None
-    if agent_name == "baseline":
+    if agent_name == 'baseline':
         agent = BaselineAgent(color, None)
-    elif agent_name == "minimax":
-        agent = MinimaxAgent(color, None)
-    else:
-        print("haha, that's not implemented yet")
+    elif agent_name == 'base-minimax':
+        agent = MinimaxAgent(color, None, "simple")
+    elif agent_name == 'fancy-minimax':
+        agent = MinimaxAgent(color, None, "fancy")
+    elif agent_name == "linear-only":
+        agent = ModelOnlyAgent(color, None, "linear")
+    elif agent_name == "deep-only":
+        agent = ModelOnlyAgent(color, None, "deep")
+    elif agent_name == "linear-minimax":
+        agent = MinimaxAgent(color, None, "linear")
+    elif agent_name == "deep-minimax":
+        agent = MinimaxAgent(color, None, "deep")
     return agent
 
 def get_outcome(board):
