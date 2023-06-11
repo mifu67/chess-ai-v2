@@ -44,7 +44,6 @@ class MinimaxAgent:
             # self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
             self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt")
             self.model.eval()
-            self.model.eval()
         self.book = chess.polyglot.MemoryMappedReader("Titans.bin")
         self.in_opening = True
             

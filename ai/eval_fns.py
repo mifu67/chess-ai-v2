@@ -247,16 +247,20 @@ def evaluate_king_safety(board, color):
     return score
 
 def eval_linear(board, color, model):
+    cuda0 = torch.device('cuda:0')
     model.eval()
-    pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single))
+    # pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single))
+    pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single)).to(cuda0)
     eval = torch.argmax(model(pos)) - 1
     if color == chess.BLACK:
         eval = -eval
     return eval
 
 def eval_deep(board, color, model):
+    cuda0 = torch.device('cuda:0')
     model.eval()
-    pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single))
+    # pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single))
+    pos = torch.from_numpy(fen_to_vec(board.fen()).astype(np.single)).to(cuda0)
     eval = model(pos)
     if color == chess.BLACK:
         eval = -eval
