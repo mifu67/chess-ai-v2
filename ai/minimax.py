@@ -37,10 +37,13 @@ class MinimaxAgent:
         self.eval_fn = eval
         self.model = None
         if self.eval_fn == "linear":
-            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            # self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt")
             self.model.eval()
         if self.eval_fn == "deep":
-            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            # self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt")
+            self.model.eval()
             self.model.eval()
         self.book = chess.polyglot.MemoryMappedReader("Titans.bin")
         self.in_opening = True
@@ -56,8 +59,10 @@ class MinimaxAgent:
         elif self.eval_fn == "fancy":
             score = eval_material_count(board, self.color, self.opponent_color) + eval_pieceSquare_tables(board, self.color)
             + evaluate_pawn_structure(board, self.color) + evaluate_king_safety(board, self.color)
-        else:
+        elif self.eval_fn == "linear":
             score = eval_linear(board, self.color, self.model)
+        else:
+            score = eval_deep(board, self.color, self.model)
 
         return score
     
