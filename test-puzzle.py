@@ -78,6 +78,8 @@ def main():
 
     puzzles_df = pd.read_csv(args[2])
     num_puzzles = int(args[3])
+    themes_dict = {}
+    win_themes = {}
 
     for index, row in puzzles_df.head(num_puzzles).iterrows():
         FEN = row['FEN']
@@ -85,6 +87,15 @@ def main():
         active_move = split_FEN[1]
         moves = row['Moves']
         split_moves = moves.strip().split(' ')
+        themes = row['Themes']
+        split_themes = themes.strip().split(' ')
+
+        # add themes to dict
+        for theme in split_themes:
+            if theme in themes_dict:
+                themes_dict[theme] += 1
+            else:
+                themes_dict[theme] = 1
 
         # set up chessboard according to puzzle
         white = init_agent(agent_name, chess.WHITE)
@@ -100,7 +111,20 @@ def main():
 
         if winner == 1:
             agent_wins += 1
+            for theme in split_themes:
+                if theme in win_themes:
+                    win_themes[theme] += 1
+                else:
+                    win_themes[theme] = 1
     print("Agent wins:", agent_wins)
+
+    # print theme stats
+    print("Agent win percentages by theme:")
+    for theme in themes_dict:
+        if theme in win_themes:
+            print(theme + ": " + str((win_themes[theme] / themes_dict[theme])))
+        else:
+            print(theme + ": " + str(0))
 
 if __name__ == "__main__":
     main()
