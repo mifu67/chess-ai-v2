@@ -103,7 +103,7 @@ class MinimaxAgent:
                     for action in legalMoves:
                         board.push(action)
                         value = alphaBeta(board, not isComputer, currDepth - 1, alpha, beta)
-                        board.pop()
+                        board.pop() 
 
                         minValue = min(minValue, value)
                         if minValue <= alpha:

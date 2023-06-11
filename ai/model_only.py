@@ -62,6 +62,7 @@ class ModelOnlyAgent:
                 self.board.push(move)
                 score = eval_deep(self.board, self.color, self.model)
                 print(score)
+                self.board.pop()
                 if score > max_score:
                     max_score = score
                     best_move = move
