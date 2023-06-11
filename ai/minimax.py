@@ -28,7 +28,7 @@ class MinimaxAgent:
     """
     def __init__(self, color, board, eval):
         self.name = "minimax"
-        self.depth = 2
+        self.depth = 3
         self.board = board
         self.isComputer = True
         self.color = color
@@ -116,12 +116,12 @@ class MinimaxAgent:
                     return minValue
 
         # Play openings
-        # if self.in_opening:
-        #     if self.book.get(self.board) is None:
-        #         self.in_opening = False
-        #     else:
-        #         move = self.book.weighted_choice(self.board).move
-        #         return move
+        if self.in_opening:
+            if self.book.get(self.board) is None:
+                self.in_opening = False
+            else:
+                move = self.book.weighted_choice(self.board).move
+                return move
 
         legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
         legalMoves = list(self.board.legal_moves)
@@ -156,6 +156,8 @@ class MinimaxAgent:
 
         # Generate capturing moves
         captures = [move for move in board.legal_moves if board.is_capture(move)]
+        captures = self.order_moves(board, captures)
+        print(captures)
 
         for move in captures:
             board.push(move)
