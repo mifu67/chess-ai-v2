@@ -1,0 +1,6 @@
+chess==1.9.4
+pandas==1.4.4
+peewee==3.16.2
+pip==22.2.2
+pytorch-lightning==2.0.2
+
