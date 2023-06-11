@@ -116,12 +116,12 @@ class MinimaxAgent:
                     return minValue
 
         # Play openings
-        if self.in_opening:
-            if self.book.get(self.board) is None:
-                self.in_opening = False
-            else:
-                move = self.book.weighted_choice(self.board).move
-                return move
+        # if self.in_opening:
+        #     if self.book.get(self.board) is None:
+        #         self.in_opening = False
+        #     else:
+        #         move = self.book.weighted_choice(self.board).move
+        #         return move
 
         legalMoves = self.order_moves(self.board, list(self.board.legal_moves))
         legalMoves = list(self.board.legal_moves)
