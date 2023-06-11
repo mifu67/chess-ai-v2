@@ -28,12 +28,12 @@ class MinimaxAgent:
     """
     def __init__(self, color, board, eval):
         self.name = "minimax"
-        self.depth = 3
+        self.depth = 2
         self.board = board
         self.isComputer = True
         self.color = color
         self.opponent_color = not color
-        self.quiesce_on = True
+        self.quiesce_on = False
         self.eval_fn = eval
         self.model = None
         if self.eval_fn == "linear":
@@ -143,8 +143,8 @@ class MinimaxAgent:
         return maxAction
 
     def quiesce(self, alpha, beta, board, depth):
-        if depth == 0 or board.is_game_over():
-            return self.eval()
+        # if depth == 0 or board.is_game_over():
+        #     return self.eval()
 
         cur_score = self.eval()
 
