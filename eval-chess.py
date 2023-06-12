@@ -40,8 +40,9 @@ def get_outcome(board):
         return 0.5
 
 def run_game(board : Chessboard, white, black) -> int:
-    winner = 0
-    while True:
+    winner = 0.5
+    num_moves = 0
+    while num_moves < 50:
         board.move(white)
         if board.is_end():
             winner = get_outcome(board)
@@ -50,6 +51,7 @@ def run_game(board : Chessboard, white, black) -> int:
         if board.is_end():
             winner = get_outcome(board)
             break
+        num_moves += 1
     return winner
             
 
