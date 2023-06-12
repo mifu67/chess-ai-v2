@@ -77,11 +77,24 @@ def main():
     agent_wins = 0
 
     puzzles_df = pd.read_csv(args[2])
-    num_puzzles = int(args[3])
-    themes_dict = {}
+    #num_puzzles = int(args[3])
+    themes_dict = {'backRankMate':0, 'crushing':0, 'equality':0, 'fork':0, 'hangingPiece':0, 'pin':0, 'promotion':0,
+    'quietMove':0, 'sacrifice':0}
     win_themes = {}
 
-    for index, row in puzzles_df.head(num_puzzles).iterrows():
+    ratings = []
+
+    #for index, row in puzzles_df.head(num_puzzles).iterrows():
+    for index, row in puzzles_df.iterrows():
+
+        # check if 50 of each theme has been played
+        themes_finished = 0
+        for theme in themes_dict:
+            if themes_dict[theme] == 50:
+                themes_finished += 1
+        if themes_finished == len(themes_dict):
+            break
+
         FEN = row['FEN']
         split_FEN = FEN.strip().split(' ')
         active_move = split_FEN[1]
@@ -89,13 +102,23 @@ def main():
         split_moves = moves.strip().split(' ')
         themes = row['Themes']
         split_themes = themes.strip().split(' ')
+        rating = row['Rating']
+        ratings.append(rating)
 
+        skip_puzzle = True
         # add themes to dict
         for theme in split_themes:
             if theme in themes_dict:
-                themes_dict[theme] += 1
+                if themes_dict[theme] < 50:
+                    skip_puzzle = False
+                    themes_dict[theme] += 1
+                else:
+                    continue
             else:
-                themes_dict[theme] = 1
+                continue
+
+        if skip_puzzle:
+            continue
 
         # set up chessboard according to puzzle
         white = init_agent(agent_name, chess.WHITE)
@@ -119,12 +142,16 @@ def main():
     print("Agent wins:", agent_wins)
 
     # print theme stats
+    print("Total number of puzzles by theme: " + str(themes_dict))
     print("Agent win percentages by theme:")
     for theme in themes_dict:
         if theme in win_themes:
             print(theme + ": " + str((win_themes[theme] / themes_dict[theme])))
         else:
             print(theme + ": " + str(0))
+
+    avg_rating = round(sum(ratings) / len(ratings))
+    print("Average puzzle rating: " + str(avg_rating))
 
 if __name__ == "__main__":
     main()
