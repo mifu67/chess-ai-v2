@@ -7,6 +7,7 @@ Run evaluation by pitting two agents against each other.
 from chessboard import Chessboard
 import chess
 import sys
+from tqdm import tqdm
 
 from ai.baseline import BaselineAgent
 from ai.minimax import MinimaxAgent
@@ -42,7 +43,7 @@ def get_outcome(board):
 def run_game(board : Chessboard, white, black) -> int:
     winner = 0.5
     num_moves = 0
-    while num_moves < 50:
+    while True:
         board.move(white)
         if board.is_end():
             winner = get_outcome(board)
@@ -66,7 +67,10 @@ def main():
     black_wins = 0
     draws = 0
 
-    for i in range(int(args[3])):
+    results = open("results.txt", "a")
+    results.write("White: " + white_type + "Black: " + black_type)
+
+    for i in tqdm(range(int(args[3]))):
         board = Chessboard(None, white, black, verbose=False)
         winner = run_game(board, white, black)
         board.display()
@@ -76,9 +80,11 @@ def main():
             black_wins += 1
         else:
             draws += 1
-    print("White wins:", white_wins)
-    print("Black wins:", black_wins)
-    print("Draws:", draws)
+
+    results.write("White wins:", white_wins)
+    results.write("Black wins:", black_wins)
+    results.write("Draws:", draws)
+    results.close()
 
 if __name__ == "__main__":
     main()
