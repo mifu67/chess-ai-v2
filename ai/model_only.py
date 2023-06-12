@@ -58,10 +58,10 @@ class ModelOnlyAgent:
             max_score = -1000
             best_move = None
             for move in legal_moves:
-                print(self.board.san(move))
+                # print(self.board.san(move))
                 self.board.push(move)
                 score = eval_deep(self.board, self.color, self.model)
-                print(score)
+                # print(score)
                 self.board.pop()
                 if score > max_score:
                     max_score = score
