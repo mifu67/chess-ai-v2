@@ -84,6 +84,8 @@ def main():
 
     ratings = []
 
+    unique_puzzles = 0
+
     #for index, row in puzzles_df.head(num_puzzles).iterrows():
     for index, row in puzzles_df.iterrows():
 
@@ -109,11 +111,12 @@ def main():
         # add themes to dict
         for theme in split_themes:
             if theme in themes_dict:
-                if themes_dict[theme] < 50:
+                # don't play puzzle if one of the themes has reached limit
+                if themes_dict[theme] == 50:
+                    break
+                else:
                     skip_puzzle = False
                     themes_dict[theme] += 1
-                else:
-                    continue
             else:
                 continue
 
@@ -139,6 +142,9 @@ def main():
                     win_themes[theme] += 1
                 else:
                     win_themes[theme] = 1
+        unique_puzzles += 1
+
+    print("Total unique puzzles played: ", unique_puzzles)
     print("Agent wins:", agent_wins)
 
     # print theme stats
@@ -146,7 +152,7 @@ def main():
     print("Agent win percentages by theme:")
     for theme in themes_dict:
         if theme in win_themes:
-            print(theme + ": " + str((win_themes[theme] / themes_dict[theme])))
+            print(theme + ": " + str(round((win_themes[theme] / themes_dict[theme]), 2) * 100))
         else:
             print(theme + ": " + str(0))
 
