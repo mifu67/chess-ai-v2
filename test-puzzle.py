@@ -148,7 +148,7 @@ def main():
     print("Agent wins:", agent_wins)
 
     # print theme stats
-    print("Total number of puzzles by theme: " + str(themes_dict))
+    #print("Total number of puzzles by theme: " + str(themes_dict))
     print("Agent win percentages by theme:")
     for theme in themes_dict:
         if theme in win_themes:
@@ -157,7 +157,7 @@ def main():
             print(theme + ": " + str(0))
 
     avg_rating = round(sum(ratings) / len(ratings))
-    print("Average puzzle rating: " + str(avg_rating))
+    #print("Average puzzle rating: " + str(avg_rating))
 
 if __name__ == "__main__":
     main()
