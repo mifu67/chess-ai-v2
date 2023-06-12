@@ -81,9 +81,9 @@ def main():
         else:
             draws += 1
 
-    results.write("White wins:", white_wins)
-    results.write("Black wins:", black_wins)
-    results.write("Draws:", draws)
+    results.write("White wins: " +  str(white_wins))
+    results.write("Black wins: " + str(black_wins))
+    results.write("Draws: " + str(draws))
     results.close()
 
 if __name__ == "__main__":
