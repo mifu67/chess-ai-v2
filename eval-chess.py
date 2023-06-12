@@ -68,7 +68,7 @@ def main():
     draws = 0
 
     results = open("results.txt", "a")
-    results.write("White: " + white_type + "Black: " + black_type)
+    results.write("White: " + white_type + " Black: " + black_type + "\n")
 
     for i in tqdm(range(int(args[3]))):
         board = Chessboard(None, white, black, verbose=False)
@@ -81,9 +81,9 @@ def main():
         else:
             draws += 1
 
-    results.write("White wins: " +  str(white_wins))
-    results.write("Black wins: " + str(black_wins))
-    results.write("Draws: " + str(draws))
+    results.write("White wins: " +  str(white_wins) + "\n")
+    results.write("Black wins: " + str(black_wins) + "\n")
+    results.write("Draws: " + str(draws) + "\n")
     results.close()
 
 if __name__ == "__main__":
