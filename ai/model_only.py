@@ -22,9 +22,9 @@ class ModelOnlyAgent:
         self.color = color
         self.eval_fn = eval
         if self.eval_fn == "linear":
-            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            self.model = LinearModel.load_from_checkpoint("lightning_logs/version_4/checkpoints/epoch=0-step=36294.ckpt")
         elif self.eval_fn == "deep":
-            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt", map_location=torch.device('cpu'))
+            self.model = DeepModel.load_from_checkpoint("lightning_logs/version_5/checkpoints/epoch=0-step=36294.ckpt")
         self.model.eval()
 
     def get_move(self):
@@ -58,10 +58,10 @@ class ModelOnlyAgent:
             max_score = -1000
             best_move = None
             for move in legal_moves:
-                print(self.board.san(move))
+                # print(self.board.san(move))
                 self.board.push(move)
                 score = eval_deep(self.board, self.color, self.model)
-                print(score)
+                # print(score)
                 self.board.pop()
                 if score > max_score:
                     max_score = score
