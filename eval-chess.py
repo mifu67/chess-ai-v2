@@ -69,7 +69,7 @@ def main():
     black_wins = 0
     draws = 0
 
-    results = open("/kaggle/working/results.txt", "a")
+    results = open("results.txt", "a")
     results.write("White: " + white_type + " Black: " + black_type + "\n")
 
     for i in tqdm(range(int(args[3]))):
