@@ -53,6 +53,7 @@ def run_game(board : Chessboard, white, black) -> int:
             winner = get_outcome(board)
             break
         num_moves += 1
+        print(num_moves)
     return winner
             
 
@@ -73,7 +74,7 @@ def main():
     for i in tqdm(range(int(args[3]))):
         board = Chessboard(None, white, black, verbose=False)
         winner = run_game(board, white, black)
-        board.display()
+        # board.display()
         if winner == 1:
             white_wins += 1
         elif winner == 0:
